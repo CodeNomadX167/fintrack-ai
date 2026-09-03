@@ -2,6 +2,12 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import StatCard from "../components/StatCard";
 
+import {
+  Wallet,
+  TrendingUp,
+  TrendingDown,
+  PiggyBank
+} from "lucide-react";
 function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-100">
@@ -36,14 +42,36 @@ function Dashboard() {
 
             {/* Stat Cards Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
-              <StatCard title="Total Income" value="₹50,000" />
 
-              <StatCard title="Total Expense" value="₹30,000" />
+  <StatCard
+    title="Total Balance"
+    value="₹20,000"
+    icon={<Wallet size={22} />}
+    description="Current available balance"
+  />
 
-              <StatCard title="Balance" value="₹20,000" />
+  <StatCard
+    title="Total Income"
+    value="₹50,000"
+    icon={<TrendingUp size={22} />}
+    description="Total money received"
+  />
 
-              <StatCard title="Savings" value="₹20,000" />
-            </div>
+  <StatCard
+    title="Total Expense"
+    value="₹30,000"
+    icon={<TrendingDown size={22} />}
+    description="Total money spent"
+  />
+
+  <StatCard
+    title="Savings"
+    value="₹20,000"
+    icon={<PiggyBank size={22} />}
+    description="Remaining balance"
+  />
+
+</div>
           </div>
         </main>
       </div>
