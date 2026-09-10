@@ -2,10 +2,12 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import StatCard from "../components/StatCard";
 import TransactionTable from "../components/TransactionTable";
+import { useNavigate } from "react-router-dom";
 
 import { List, TrendingUp, TrendingDown } from "lucide-react";
 
 function Transactions() {
+  const navigate = useNavigate();
   const transactions = [
     {
       id: 1,
@@ -67,9 +69,12 @@ function Transactions() {
               </p>
             </div>
 
-            <button className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
-              + Add Transaction
-            </button>
+           <button
+  onClick={() => navigate("/add-transaction")}
+  className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
+>
+  + Add Transaction
+</button>
           </div>
 
           {/* Transaction Summary */}
