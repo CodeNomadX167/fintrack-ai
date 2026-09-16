@@ -1,10 +1,25 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+
+import { useNavigate, useParams } from "react-router-dom";
+
 import Navbar from "../components/Navbar";
+
 import Sidebar from "../components/Sidebar";
 
+import { useContext } from "react";
+import { TransactionContext } from "../context/TransactionContext";
+
 const AddTransaction = () => {
+  const { id } = useParams();
+
   const [type, setType] = useState("Expense");
+
+  const {
+    transactions,
+    addTransaction,
+    updateTransaction,
+  } = useContext(TransactionContext);
+
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
   const [account, setAccount] = useState("");
@@ -14,6 +29,27 @@ const AddTransaction = () => {
   const [errors, setErrors] = useState({});
 
   const navigate = useNavigate();
+
+  // Find transaction and pre-fill form in Edit mode
+  useEffect(() => {
+    if (id) {
+      const transaction = transactions.find(
+        (item) => item.id === Number(id)
+      );
+
+      if (transaction) {
+        setType(transaction.type);
+        setAmount(transaction.amount);
+        setCategory(transaction.category);
+        setAccount(transaction.account || "");
+        setDate(transaction.date);
+        setPaymentMethod(transaction.paymentMethod || "");
+        setDescription(transaction.description || "");
+      }
+    }
+  }, [id, transactions]);
+
+  const isEditMode = Boolean(id);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -45,17 +81,35 @@ const AddTransaction = () => {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      console.log({
+
+      const transactionData = {
         type,
-        amount,
+        amount: Number(amount),
         category,
         account,
         date,
         paymentMethod,
         description,
-      });
+      };
 
-      alert("Transaction is valid!");
+      if (isEditMode) {
+        // Update existing transaction
+        updateTransaction(id, transactionData);
+
+        alert("Transaction updated successfully!");
+      } else {
+        // Add new transaction
+        const newTransaction = {
+          id: Date.now(),
+          ...transactionData,
+        };
+
+        addTransaction(newTransaction);
+
+        alert("Transaction added successfully!");
+      }
+
+      navigate("/transactions");
     }
   };
 
@@ -69,14 +123,17 @@ const AddTransaction = () => {
         </div>
 
         <main className="flex-1 p-4 md:p-6 lg:p-8">
+
           {/* Page Header */}
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
-              Add Transaction
+              {isEditMode ? "Edit Transaction" : "Add Transaction"}
             </h1>
 
             <p className="mt-2 text-gray-500">
-              Add a new income or expense transaction.
+              {isEditMode
+                ? "Update your existing transaction."
+                : "Add a new income or expense transaction."}
             </p>
           </div>
 
@@ -254,6 +311,7 @@ const AddTransaction = () => {
 
               {/* Buttons */}
               <div className="flex flex-col gap-3 border-t border-gray-200 pt-5 sm:flex-row sm:justify-end">
+
                 <button
                   type="button"
                   onClick={() => navigate("/transactions")}
@@ -266,8 +324,9 @@ const AddTransaction = () => {
                   type="submit"
                   className="rounded-lg bg-blue-600 px-5 py-2.5 font-medium text-white transition hover:bg-blue-700"
                 >
-                  Add Transaction
+                  {isEditMode ? "Save Changes" : "Add Transaction"}
                 </button>
+
               </div>
 
             </form>

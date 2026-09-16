@@ -3,45 +3,26 @@ import Sidebar from "../components/Sidebar";
 import StatCard from "../components/StatCard";
 import TransactionTable from "../components/TransactionTable";
 import { useNavigate } from "react-router-dom";
-
+import { useContext, useState } from "react";
+import { TransactionContext } from "../context/TransactionContext";
 import { List, TrendingUp, TrendingDown } from "lucide-react";
 
 function Transactions() {
   const navigate = useNavigate();
-  const transactions = [
-    {
-      id: 1,
-      date: "01 Sep 2026",
-      description: "Salary",
-      category: "Income",
-      type: "Income",
-      amount: 25000,
-    },
-    {
-      id: 2,
-      date: "02 Sep 2026",
-      description: "Grocery",
-      category: "Food",
-      type: "Expense",
-      amount: 1200,
-    },
-    {
-      id: 3,
-      date: "03 Sep 2026",
-      description: "Freelance Work",
-      category: "Freelancing",
-      type: "Income",
-      amount: 5000,
-    },
-    {
-      id: 4,
-      date: "04 Sep 2026",
-      description: "Electricity Bill",
-      category: "Bills",
-      type: "Expense",
-      amount: 850,
-    },
-  ];
+
+  const { transactions } = useContext(TransactionContext);
+
+  const [searchText, setSearchText] = useState("");
+
+  // Filter transactions based on description or category
+  const filteredTransactions = transactions.filter((transaction) => {
+    const search = searchText.toLowerCase();
+
+    return (
+      transaction.description.toLowerCase().includes(search) ||
+      transaction.category.toLowerCase().includes(search)
+    );
+  });
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -69,12 +50,12 @@ function Transactions() {
               </p>
             </div>
 
-           <button
-  onClick={() => navigate("/add-transaction")}
-  className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
->
-  + Add Transaction
-</button>
+            <button
+              onClick={() => navigate("/add-transaction")}
+              className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
+            >
+              + Add Transaction
+            </button>
           </div>
 
           {/* Transaction Summary */}
@@ -112,7 +93,18 @@ function Transactions() {
                 Recent Transactions
               </h2>
 
-              <TransactionTable transactions={transactions} />
+              {/* Search Input */}
+              <div className="mb-5">
+                <input
+                  type="text"
+                  placeholder="🔍 Search transactions..."
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                />
+              </div>
+
+              <TransactionTable transactions={filteredTransactions} />
             </div>
           </div>
         </main>
