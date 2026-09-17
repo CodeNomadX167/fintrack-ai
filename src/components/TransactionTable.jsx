@@ -16,8 +16,10 @@ function TransactionTable({ transactions }) {
 
   return (
     <>
+      {/* Transactions Table */}
       <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
         <table className="w-full min-w-[800px]">
+          {/* Table Header */}
           <thead className="border-b border-gray-200 bg-gray-50">
             <tr>
               <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
@@ -46,24 +48,29 @@ function TransactionTable({ transactions }) {
             </tr>
           </thead>
 
+          {/* Table Body */}
           <tbody>
             {transactions.map((transaction) => (
               <tr
                 key={transaction.id}
                 className="border-b border-gray-100 last:border-0 hover:bg-gray-50"
               >
+                {/* Date */}
                 <td className="px-6 py-4 text-sm text-gray-600">
                   {transaction.date}
                 </td>
 
+                {/* Description */}
                 <td className="px-6 py-4 text-sm font-medium text-gray-900">
                   {transaction.description}
                 </td>
 
+                {/* Category */}
                 <td className="px-6 py-4 text-sm text-gray-600">
                   {transaction.category}
                 </td>
 
+                {/* Type */}
                 <td className="px-6 py-4">
                   <span
                     className={`rounded-full px-3 py-1 text-xs font-medium ${
@@ -76,21 +83,36 @@ function TransactionTable({ transactions }) {
                   </span>
                 </td>
 
+                {/* Amount */}
                 <td className="px-6 py-4 text-right text-sm font-semibold text-gray-900">
                   ₹{transaction.amount.toLocaleString("en-IN")}
                 </td>
 
+                {/* Actions */}
                 <td className="px-6 py-4 text-center">
+                  {/* View */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      navigate(`/transactions/${transaction.id}`)
+                    }
+                    className="rounded-lg px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                  >
+                    View
+                  </button>
+
+                  {/* Edit */}
                   <button
                     type="button"
                     onClick={() =>
                       navigate(`/edit-transaction/${transaction.id}`)
                     }
-                    className="rounded-lg px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50"
+                    className="ml-2 rounded-lg px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50"
                   >
                     Edit
                   </button>
 
+                  {/* Delete */}
                   <button
                     type="button"
                     onClick={() => setTransactionToDelete(transaction)}
@@ -105,6 +127,7 @@ function TransactionTable({ transactions }) {
         </table>
       </div>
 
+      {/* Delete Confirmation Modal */}
       {transactionToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
@@ -117,6 +140,7 @@ function TransactionTable({ transactions }) {
             </p>
 
             <div className="mt-6 flex justify-end gap-3">
+              {/* Cancel */}
               <button
                 type="button"
                 onClick={() => setTransactionToDelete(null)}
@@ -125,6 +149,7 @@ function TransactionTable({ transactions }) {
                 Cancel
               </button>
 
+              {/* Confirm Delete */}
               <button
                 type="button"
                 onClick={handleConfirmDelete}
