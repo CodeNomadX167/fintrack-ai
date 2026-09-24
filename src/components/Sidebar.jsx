@@ -3,9 +3,7 @@ import { Link } from "react-router-dom";
 function Sidebar() {
   return (
     <aside className="min-h-screen w-56 border-r border-gray-200 bg-white p-5">
-      <h3 className="mb-6 text-lg font-semibold text-gray-900">
-        Menu
-      </h3>
+      <h3 className="mb-6 text-lg font-semibold text-gray-900">Menu</h3>
 
       <div className="space-y-2">
         <Link
@@ -20,6 +18,19 @@ function Sidebar() {
           className="block cursor-pointer rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
         >
           Transactions
+        </Link>
+
+        <Link
+          to="/categories"
+          className="block cursor-pointer rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
+        >
+          Categories
+        </Link>
+        <Link
+          to="/accounts"
+          className="block cursor-pointer rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100"
+        >
+          Accounts
         </Link>
 
         <p className="cursor-pointer rounded-lg px-3 py-2 text-gray-700 hover:bg-gray-100">
