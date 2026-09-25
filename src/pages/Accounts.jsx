@@ -24,6 +24,10 @@ function Accounts() {
 
   const [error, setError] = useState("");
 
+  // Stores the ID of account being edited
+  const [editingAccountId, setEditingAccountId] = useState(null);
+
+  // Add Account
   const handleAddAccount = (e) => {
     e.preventDefault();
 
@@ -63,14 +67,73 @@ function Accounts() {
     setShowForm(false);
   };
 
+  // Start Editing Account
+  const handleEdit = (account) => {
+    setEditingAccountId(account.id);
+    setAccountName(account.name);
+    setAccountType(account.type);
+    setInitialBalance(account.balance);
+    setError("");
+    setShowForm(true);
+  };
+
+  // Update Account
+  const handleUpdateAccount = (e) => {
+    e.preventDefault();
+
+    if (!accountName.trim()) {
+      setError("Account name is required");
+      return;
+    }
+
+    if (!accountType) {
+      setError("Account type is required");
+      return;
+    }
+
+    if (initialBalance === "") {
+      setError("Initial balance is required");
+      return;
+    }
+
+    if (Number(initialBalance) < 0) {
+      setError("Initial balance cannot be negative");
+      return;
+    }
+
+    setAccounts(
+      accounts.map((account) =>
+        account.id === editingAccountId
+          ? {
+              ...account,
+              name: accountName.trim(),
+              type: accountType,
+              balance: Number(initialBalance),
+            }
+          : account
+      )
+    );
+
+    // Reset form
+    setAccountName("");
+    setAccountType("");
+    setInitialBalance("");
+    setError("");
+    setShowForm(false);
+    setEditingAccountId(null);
+  };
+
+  // Cancel Form
   const handleCancel = () => {
     setAccountName("");
     setAccountType("");
     setInitialBalance("");
     setError("");
     setShowForm(false);
+    setEditingAccountId(null);
   };
 
+  // Delete Account
   const handleDelete = (id) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this account?"
@@ -102,6 +165,10 @@ function Accounts() {
           onClick={() => {
             setShowForm(true);
             setError("");
+            setEditingAccountId(null);
+            setAccountName("");
+            setAccountType("");
+            setInitialBalance("");
           }}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg"
         >
@@ -109,15 +176,23 @@ function Accounts() {
         </button>
       </div>
 
-      {/* Add Account Form */}
+      {/* Add / Edit Account Form */}
       {showForm && (
         <div className="bg-white p-6 rounded-xl shadow mb-6">
 
           <h2 className="text-lg font-semibold mb-4">
-            Add Account
+            {editingAccountId
+              ? "Edit Account"
+              : "Add Account"}
           </h2>
 
-          <form onSubmit={handleAddAccount}>
+          <form
+            onSubmit={
+              editingAccountId
+                ? handleUpdateAccount
+                : handleAddAccount
+            }
+          >
 
             {/* Account Name */}
             <div className="mb-4">
@@ -210,7 +285,9 @@ function Accounts() {
                 type="submit"
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg"
               >
-                Add Account
+                {editingAccountId
+                  ? "Save Changes"
+                  : "Add Account"}
               </button>
 
             </div>
@@ -241,6 +318,7 @@ function Accounts() {
 
               <div className="flex items-center justify-between">
 
+                {/* Account Information */}
                 <div>
                   <h3 className="font-semibold text-lg">
                     {account.name}
@@ -251,6 +329,7 @@ function Accounts() {
                   </p>
                 </div>
 
+                {/* Balance + Actions */}
                 <div className="text-right">
 
                   <p className="text-lg font-bold">
@@ -259,10 +338,15 @@ function Accounts() {
 
                   <div className="flex gap-2 mt-2">
 
-                    <button className="px-3 py-1 border rounded-lg">
+                    {/* Edit */}
+                    <button
+                      onClick={() => handleEdit(account)}
+                      className="px-3 py-1 border rounded-lg text-blue-600"
+                    >
                       Edit
                     </button>
 
+                    {/* Delete */}
                     <button
                       onClick={() =>
                         handleDelete(account.id)
