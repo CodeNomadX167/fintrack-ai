@@ -1,4 +1,8 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
@@ -8,26 +12,71 @@ import Categories from "./pages/Categories";
 import Accounts from "./pages/Accounts";
 import Budgets from "./pages/Budgets";
 
+import GoalsPage from "./features/goals/GoalsPage";
+import GoalDetailsPage from "./features/goals/GoalDetailsPage";
+
 function App() {
   return (
     <BrowserRouter>
+
       <Routes>
-        <Route path="/" element={<Dashboard />} />
 
-        <Route path="/transactions" element={<Transactions />} />
+        {/* Dashboard */}
+        <Route
+          path="/"
+          element={<Dashboard />}
+        />
 
-        <Route path="/add-transaction" element={<AddTransaction />} />
+        {/* Transactions */}
+        <Route
+          path="/transactions"
+          element={<Transactions />}
+        />
 
-        <Route path="/edit-transaction/:id" element={<AddTransaction />} />
+        <Route
+          path="/add-transaction"
+          element={<AddTransaction />}
+        />
 
-        <Route path="/transactions/:id" element={<TransactionDetails />} />
+        <Route
+          path="/edit-transaction/:id"
+          element={<AddTransaction />}
+        />
 
-        <Route path="/categories" element={<Categories />} />
+        <Route
+          path="/transactions/:id"
+          element={<TransactionDetails />}
+        />
 
-        <Route path="/accounts" element={<Accounts />} />
+        {/* Other Modules */}
+        <Route
+          path="/categories"
+          element={<Categories />}
+        />
 
-        <Route path="/budgets" element={<Budgets />} />
+        <Route
+          path="/accounts"
+          element={<Accounts />}
+        />
+
+        <Route
+          path="/budgets"
+          element={<Budgets />}
+        />
+
+        {/* Goals */}
+        <Route
+          path="/goals"
+          element={<GoalsPage />}
+        />
+
+        <Route
+          path="/goals/:id"
+          element={<GoalDetailsPage />}
+        />
+
       </Routes>
+
     </BrowserRouter>
   );
 }
