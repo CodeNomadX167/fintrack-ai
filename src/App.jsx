@@ -6,6 +6,7 @@ import AddTransaction from "./pages/AddTransaction";
 import TransactionDetails from "./pages/TransactionDetails";
 import Categories from "./pages/Categories";
 import Accounts from "./pages/Accounts";
+import Budgets from "./pages/Budgets";
 
 function App() {
   return (
@@ -18,9 +19,14 @@ function App() {
         <Route path="/add-transaction" element={<AddTransaction />} />
 
         <Route path="/edit-transaction/:id" element={<AddTransaction />} />
+
         <Route path="/transactions/:id" element={<TransactionDetails />} />
+
         <Route path="/categories" element={<Categories />} />
+
         <Route path="/accounts" element={<Accounts />} />
+
+        <Route path="/budgets" element={<Budgets />} />
       </Routes>
     </BrowserRouter>
   );
