@@ -1,49 +1,42 @@
 # FinTrack AI
 
-FinTrack AI is a smart business finance and analytics software project.
+Smart Finance Management & AI-Powered Financial Analytics Platform.
 
-## Project Status
+## Features
 
-Currently, the frontend foundation and basic user interface have been developed.
-
-## Features Completed
-
-- React + Vite project setup
-- Tailwind CSS integration
-- Navbar
-- Sidebar
-- Login UI
-- Forgot Password UI
-- Profile UI
-- Dashboard UI
-- Total Income card
-- Total Expense card
-- Balance card
-- Savings card
-- Reusable StatCard component
+- Authentication
+- User Profile
+- Dashboard
+- Transactions
+- Categories
+- Accounts
+- Budgets
+- Goals
+- Analytics
+- Reports
+- AI Insights
 
 ## Tech Stack
+
+### Frontend
 
 - React
 - Vite
 - Tailwind CSS
-- JavaScript
 
-## Current Project Structure
+### Backend
+
+- Node.js
+- Express
+- Prisma
+- PostgreSQL
+
+## Project Structure
 
 ```text
 src/
 ├── components/
-│   ├── Navbar.jsx
-│   ├── Sidebar.jsx
-│   └── StatCard.jsx
-│
 ├── pages/
-│   ├── Dashboard.jsx
-│   ├── ForgotPassword.jsx
-│   ├── Login.jsx
-│   └── Profile.jsx
-│
+├── assets/
 ├── App.jsx
-├── main.jsx
-└── index.css
+└── main.jsx
