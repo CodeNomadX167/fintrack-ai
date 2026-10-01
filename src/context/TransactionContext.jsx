@@ -1,56 +1,66 @@
-import { createContext, useState } from "react";
+import { createContext, useCallback, useMemo, useState } from "react";
 
-export const TransactionContext = createContext();
+export const TransactionContext = createContext(null);
+
+const INITIAL_TRANSACTIONS = [
+  {
+    id: 1,
+    date: "01 Sep 2026",
+    description: "Salary",
+    category: "Income",
+    type: "Income",
+    amount: 25000,
+  },
+  {
+    id: 2,
+    date: "02 Sep 2026",
+    description: "Grocery",
+    category: "Food",
+    type: "Expense",
+    amount: 1200,
+  },
+  {
+    id: 3,
+    date: "03 Sep 2026",
+    description: "Freelance Work",
+    category: "Freelancing",
+    type: "Income",
+    amount: 5000,
+  },
+  {
+    id: 4,
+    date: "04 Sep 2026",
+    description: "Electricity Bill",
+    category: "Bills",
+    type: "Expense",
+    amount: 850,
+  },
+];
 
 export const TransactionProvider = ({ children }) => {
-  const [transactions, setTransactions] = useState([
-    {
-      id: 1,
-      date: "01 Sep 2026",
-      description: "Salary",
-      category: "Income",
-      type: "Income",
-      amount: 25000,
-    },
-    {
-      id: 2,
-      date: "02 Sep 2026",
-      description: "Grocery",
-      category: "Food",
-      type: "Expense",
-      amount: 1200,
-    },
-    {
-      id: 3,
-      date: "03 Sep 2026",
-      description: "Freelance Work",
-      category: "Freelancing",
-      type: "Income",
-      amount: 5000,
-    },
-    {
-      id: 4,
-      date: "04 Sep 2026",
-      description: "Electricity Bill",
-      category: "Bills",
-      type: "Expense",
-      amount: 850,
-    },
-  ]);
+  const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
 
-  // Add new transaction
-  const addTransaction = (transaction) => {
+  /**
+   * Add a new transaction.
+   * Backend API can replace this local state operation later.
+   */
+  const addTransaction = useCallback((transaction) => {
     setTransactions((prevTransactions) => [
       ...prevTransactions,
       transaction,
     ]);
-  };
+  }, []);
 
-  // Update existing transaction
-  const updateTransaction = (id, updatedData) => {
+  /**
+   * Update an existing transaction.
+   * Supports both numeric and string route IDs.
+   */
+  const updateTransaction = useCallback((id, updatedData) => {
+    const transactionId = Number(id);
+
     setTransactions((prevTransactions) =>
       prevTransactions.map((transaction) =>
-        transaction.id === Number(id)
+        Number(transaction.id) === transactionId
           ? {
               ...transaction,
               ...updatedData,
@@ -58,27 +68,51 @@ export const TransactionProvider = ({ children }) => {
           : transaction
       )
     );
-  };
+  }, []);
 
-  // Delete transaction
-  const deleteTransaction = (id) => {
+  /**
+   * Delete an existing transaction.
+   */
+  const deleteTransaction = useCallback((id) => {
+    const transactionId = Number(id);
+
     setTransactions((prevTransactions) =>
       prevTransactions.filter(
-        (transaction) => transaction.id !== Number(id)
+        (transaction) => Number(transaction.id) !== transactionId
       )
     );
-  };
+  }, []);
+
+  /**
+   * Replace all transactions.
+   * Useful later when loading data from the backend API.
+   */
+  const replaceTransactions = useCallback((newTransactions) => {
+    setTransactions(
+      Array.isArray(newTransactions) ? newTransactions : []
+    );
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      transactions,
+      setTransactions,
+      addTransaction,
+      updateTransaction,
+      deleteTransaction,
+      replaceTransactions,
+    }),
+    [
+      transactions,
+      addTransaction,
+      updateTransaction,
+      deleteTransaction,
+      replaceTransactions,
+    ]
+  );
 
   return (
-    <TransactionContext.Provider
-      value={{
-        transactions,
-        setTransactions,
-        addTransaction,
-        updateTransaction,
-        deleteTransaction,
-      }}
-    >
+    <TransactionContext.Provider value={contextValue}>
       {children}
     </TransactionContext.Provider>
   );

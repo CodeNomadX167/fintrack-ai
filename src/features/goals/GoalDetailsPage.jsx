@@ -1,196 +1,365 @@
 import { useParams, useNavigate } from "react-router-dom";
+import {
+  ArrowLeft,
+  CalendarDays,
+  CircleDollarSign,
+  FileText,
+  Target,
+  TrendingUp,
+} from "lucide-react";
 
 function GoalDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const savedGoals =
-    localStorage.getItem("fintrack_goals");
+  let goals = [];
 
-  const goals = savedGoals
-    ? JSON.parse(savedGoals)
-    : [];
+  try {
+    const savedGoals = localStorage.getItem("fintrack_goals");
+    goals = savedGoals ? JSON.parse(savedGoals) : [];
+  } catch {
+    goals = [];
+  }
 
   const goal = goals.find(
-    (item) => item.id === Number(id)
+    (item) => String(item.id) === String(id)
   );
 
-  // Goal not found
   if (!goal) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-
+      <div
+        className="
+          min-h-screen bg-[var(--bg-primary)]
+          px-4 py-6 sm:px-6
+        "
+      >
         <div className="mx-auto max-w-3xl">
-
-          <h1 className="text-2xl font-bold text-gray-900">
-            Goal not found
-          </h1>
-
-          <p className="mt-2 text-gray-500">
-            The financial goal you are looking for
-            does not exist.
-          </p>
-
-          <button
-            type="button"
-            onClick={() => navigate("/goals")}
-            className="mt-5 rounded-lg bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700"
+          <div
+            className="
+              rounded-2xl border border-[var(--border-color)]
+              bg-[var(--bg-secondary)]
+              p-8 text-center shadow-sm
+            "
           >
-            Back to Goals
-          </button>
+            <div
+              className="
+                mx-auto flex h-14 w-14 items-center justify-center
+                rounded-full bg-red-100 text-red-600
+                dark:bg-red-900/30 dark:text-red-400
+              "
+            >
+              <Target size={26} />
+            </div>
 
+            <h1
+              className="
+                mt-5 text-2xl font-bold
+                text-[var(--text-primary)]
+              "
+            >
+              Goal Not Found
+            </h1>
+
+            <p className="mx-auto mt-2 max-w-md text-sm text-[var(--text-muted)]">
+              The financial goal you are looking for does not
+              exist or may have been removed.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => navigate("/goals")}
+              className="
+                mt-6 inline-flex items-center gap-2
+                rounded-xl bg-[var(--primary-color)]
+                px-5 py-2.5 text-sm font-semibold text-white
+                transition hover:opacity-90
+              "
+            >
+              <ArrowLeft size={17} />
+              Back to Goals
+            </button>
+          </div>
         </div>
-
       </div>
     );
   }
 
+  const targetAmount = Number(goal.targetAmount) || 0;
+  const savedAmount = Number(goal.savedAmount) || 0;
+
   const remaining = Math.max(
-    goal.targetAmount - goal.savedAmount,
+    targetAmount - savedAmount,
     0
   );
 
   const progress =
-    goal.targetAmount > 0
-      ? Math.min(
-          (goal.savedAmount / goal.targetAmount) * 100,
-          100
-        )
+    targetAmount > 0
+      ? Math.min((savedAmount / targetAmount) * 100, 100)
       : 0;
 
+  const isCompleted = progress >= 100;
+
+  const formatCurrency = (amount) =>
+    `₹${amount.toLocaleString("en-IN")}`;
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div
+      className="
+        min-h-screen bg-[var(--bg-primary)]
+        px-4 py-6 sm:px-6 lg:px-8
+      "
+    >
+      <div className="mx-auto max-w-4xl">
 
-      <div className="mx-auto max-w-3xl">
-
-        {/* Back Button */}
+        {/* Back */}
         <button
           type="button"
           onClick={() => navigate("/goals")}
-          className="mb-5 text-sm font-medium text-blue-600 hover:underline"
+          className="
+            mb-6 inline-flex items-center gap-2
+            text-sm font-semibold
+            text-[var(--text-secondary)]
+            transition hover:text-[var(--primary-color)]
+          "
         >
-          ← Back to Goals
+          <ArrowLeft size={17} />
+          Back to Goals
         </button>
 
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-7">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <div className="flex items-center gap-3">
+                <div
+                  className="
+                    flex h-12 w-12 items-center justify-center
+                    rounded-xl bg-[var(--primary-soft)]
+                    text-[var(--primary-color)]
+                  "
+                >
+                  <Target size={23} />
+                </div>
 
-          <h1 className="text-3xl font-bold text-gray-900">
-            {goal.name}
-          </h1>
+                <div>
+                  <h1
+                    className="
+                      text-2xl font-bold
+                      text-[var(--text-primary)]
+                      sm:text-3xl
+                    "
+                  >
+                    {goal.name}
+                  </h1>
 
-          <p className="mt-1 text-gray-500">
-            Financial Goal Details
-          </p>
+                  <p className="mt-1 text-sm text-[var(--text-muted)]">
+                    Financial Goal Details
+                  </p>
+                </div>
+              </div>
+            </div>
 
+            {isCompleted && (
+              <span
+                className="
+                  w-fit rounded-full bg-emerald-100
+                  px-3 py-1.5 text-xs font-bold
+                  text-emerald-700
+                  dark:bg-emerald-900/30
+                  dark:text-emerald-400
+                "
+              >
+                Goal Completed
+              </span>
+            )}
+          </div>
         </div>
 
-        {/* Details Card */}
-        <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+        {/* Main Card */}
+        <div
+          className="
+            overflow-hidden rounded-2xl
+            border border-[var(--border-color)]
+            bg-[var(--bg-secondary)]
+            shadow-sm
+          "
+        >
+          {/* Card Header */}
+          <div
+            className="
+              border-b border-[var(--border-color)]
+              px-5 py-5 sm:px-7
+            "
+          >
+            <h2 className="text-lg font-bold text-[var(--text-primary)]">
+              Goal Overview
+            </h2>
 
-          {/* Amount Grid */}
-          <div className="grid gap-4 sm:grid-cols-3">
-
-            {/* Target */}
-            <div className="rounded-lg bg-gray-50 p-4">
-
-              <p className="text-sm text-gray-500">
-                Target
-              </p>
-
-              <p className="mt-1 text-xl font-bold text-gray-900">
-                ₹{goal.targetAmount.toLocaleString("en-IN")}
-              </p>
-
-            </div>
-
-            {/* Saved */}
-            <div className="rounded-lg bg-gray-50 p-4">
-
-              <p className="text-sm text-gray-500">
-                Saved
-              </p>
-
-              <p className="mt-1 text-xl font-bold text-gray-900">
-                ₹{goal.savedAmount.toLocaleString("en-IN")}
-              </p>
-
-            </div>
-
-            {/* Remaining */}
-            <div className="rounded-lg bg-gray-50 p-4">
-
-              <p className="text-sm text-gray-500">
-                Remaining
-              </p>
-
-              <p className="mt-1 text-xl font-bold text-gray-900">
-                ₹{remaining.toLocaleString("en-IN")}
-              </p>
-
-            </div>
-
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
+              Track your savings progress toward this goal.
+            </p>
           </div>
 
-          {/* Progress */}
-          <div className="mt-8">
+          <div className="p-5 sm:p-7">
 
-            <div className="mb-2 flex justify-between">
-
-              <span className="font-medium text-gray-700">
-                Progress
-              </span>
-
-              <span className="font-semibold text-gray-900">
-                {progress.toFixed(1)}%
-              </span>
-
-            </div>
-
-            <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200">
+            {/* Amount Cards */}
+            <div className="grid gap-4 sm:grid-cols-3">
 
               <div
-                className="h-full rounded-full bg-blue-600 transition-all duration-300"
-                style={{
-                  width: `${progress}%`,
-                }}
-              />
+                className="
+                  rounded-xl border border-[var(--border-color)]
+                  bg-[var(--bg-primary)] p-4
+                "
+              >
+                <div className="flex items-center gap-2">
+                  <CircleDollarSign
+                    size={17}
+                    className="text-[var(--primary-color)]"
+                  />
 
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+                    Target
+                  </p>
+                </div>
+
+                <p className="mt-2 text-xl font-bold text-[var(--text-primary)]">
+                  {formatCurrency(targetAmount)}
+                </p>
+              </div>
+
+              <div
+                className="
+                  rounded-xl border border-[var(--border-color)]
+                  bg-[var(--bg-primary)] p-4
+                "
+              >
+                <div className="flex items-center gap-2">
+                  <TrendingUp
+                    size={17}
+                    className="text-emerald-500"
+                  />
+
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+                    Saved
+                  </p>
+                </div>
+
+                <p className="mt-2 text-xl font-bold text-[var(--text-primary)]">
+                  {formatCurrency(savedAmount)}
+                </p>
+              </div>
+
+              <div
+                className="
+                  rounded-xl border border-[var(--border-color)]
+                  bg-[var(--bg-primary)] p-4
+                "
+              >
+                <div className="flex items-center gap-2">
+                  <Target
+                    size={17}
+                    className="text-orange-500"
+                  />
+
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+                    Remaining
+                  </p>
+                </div>
+
+                <p className="mt-2 text-xl font-bold text-[var(--text-primary)]">
+                  {formatCurrency(remaining)}
+                </p>
+              </div>
             </div>
 
+            {/* Progress */}
+            <div className="mt-8">
+              <div className="mb-3 flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">
+                    Savings Progress
+                  </p>
+
+                  <p className="mt-0.5 text-xs text-[var(--text-muted)]">
+                    {formatCurrency(savedAmount)} of{" "}
+                    {formatCurrency(targetAmount)}
+                  </p>
+                </div>
+
+                <span
+                  className={`text-lg font-bold ${
+                    isCompleted
+                      ? "text-emerald-500"
+                      : "text-[var(--primary-color)]"
+                  }`}
+                >
+                  {progress.toFixed(1)}%
+                </span>
+              </div>
+
+              <div
+                className="
+                  h-3 w-full overflow-hidden rounded-full
+                  bg-[var(--border-color)]
+                "
+              >
+                <div
+                  className={`h-full rounded-full transition-all duration-700 ${
+                    isCompleted
+                      ? "bg-emerald-500"
+                      : "bg-[var(--primary-color)]"
+                  }`}
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Meta Information */}
+            <div
+              className="
+                mt-8 grid gap-5
+                border-t border-[var(--border-color)]
+                pt-6 sm:grid-cols-2
+              "
+            >
+              <div className="flex items-start gap-3">
+                <CalendarDays
+                  size={19}
+                  className="mt-0.5 text-[var(--primary-color)]"
+                />
+
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+                    Target Date
+                  </p>
+
+                  <p className="mt-1 font-semibold text-[var(--text-primary)]">
+                    {goal.targetDate || "Not set"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <FileText
+                  size={19}
+                  className="mt-0.5 text-[var(--primary-color)]"
+                />
+
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+                    Description
+                  </p>
+
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                    {goal.description || "No description provided."}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-
-          {/* Target Date */}
-          <div className="mt-8 border-t border-gray-200 pt-6">
-
-            <p className="text-sm text-gray-500">
-              Target Date
-            </p>
-
-            <p className="mt-1 font-semibold text-gray-900">
-              {goal.targetDate}
-            </p>
-
-          </div>
-
-          {/* Description */}
-          <div className="mt-6">
-
-            <p className="text-sm text-gray-500">
-              Description
-            </p>
-
-            <p className="mt-1 text-gray-700">
-              {goal.description ||
-                "No description provided."}
-            </p>
-
-          </div>
-
         </div>
 
       </div>
-
     </div>
   );
 }
